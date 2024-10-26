@@ -2,7 +2,7 @@
 
 ## 1. **Introducción** 📖
 
-El proyecto consiste en la creación de una aplicación de Console que permita la gestión de libros y autores.
+El proyecto consiste en la creación de una aplicación de consola que permita la gestión de libros y autores.
 
 ## 2. **Requisitos** 📉
 
