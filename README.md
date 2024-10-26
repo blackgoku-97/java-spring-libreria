@@ -2,7 +2,7 @@
 
 ## 1. **Introducción** 📖
 
-El proyecto consiste en la creación de una aplicación de Console que permita la gestión de libros.
+El proyecto consiste en la creación de una aplicación de Console que permita la gestión de libros y autores.
 
 ## 2. **Requisitos** 📉
 
@@ -24,17 +24,17 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 
 ### 2.3. **Herramientas** 🛠️
 
-* Java
-* Spring Boot
-* Spring Data JPA
-* Spring Boot DevTools (Opcional)
-* Jackson
-* PostgreSQL Driver
-* PostgreSQL
-* Maven
-* GitHub
-* Intellij IDEA
-* Gutendex API
+* Java: Lenguaje de programación utilizado para el desarrollo.
+* Spring Boot: Framework de Java para el desarrollo.
+* Spring Data JPA: Dependencia de Spring para la integración con bases de datos.
+* Spring Boot DevTools: Herramienta de desarrollo (Opcional)
+* Jackson: Librería para la serialización y deserialización de objetos JSON.
+* PostgreSQL Driver: Driver de PostgreSQL.
+* PostgreSQL: Sistema de gestión de bases de datos.
+* Maven: Gestor de dependencias.
+* GitHub: Sistema de control de versiones.
+* Intellij IDEA: IDE de programación.
+* Gutendex API: API de la biblioteca Gutendex.
 
 ### 2.4. **Función de la Aplicación** 🚀
 
