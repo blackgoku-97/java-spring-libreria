@@ -11,7 +11,7 @@ El proyecto consiste en la creación de una aplicación de consola que permita l
 * El sistema debe permitir la busqueda de libros por titúlo.
 * El sistema debe permitir la consulta de libros registrados.
 * El sistema debe permitir la consulta de autores registrados.
-* El sistema debe permitir la busqueda del autor por un año determinado.
+* El sistema debe permitir la busqueda de autores vivos por un año determinado.
 * El sistema debe permitir la consulta de libros por idioma.
 
 ### 2.2. **Requisitos Previos** ⚙️
