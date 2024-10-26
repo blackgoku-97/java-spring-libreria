@@ -20,7 +20,7 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 
 * ☕ **JDK 21**
 * 🖥️ **IntelliJ IDEA (Puede usar cualquier IDE de Java o editor de programación)
-* 🌐 **Conexión a Internet** (Para obtener las tasas de cambio en tiempo real)
+* 🌐 **Conexión a Internet** (Para obtener los datos de los libros y autores en tiempo real)
 
 ### 2.3. **Herramientas** 🛠️
 
