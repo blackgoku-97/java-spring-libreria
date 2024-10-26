@@ -42,10 +42,10 @@ Para ejecutar el proyecto es necesario seguir estos pasos:
 
 1. Crear variables de entorno
 
-DB_HOST: Host de la base de datos.
-DB_NAME: Nombre de la base de datos.
-DB_USER: Nombre de usuario de la base de datos.
-DB_PASSWORD: Contraseña de la base de datos.
+* DB_HOST: Host de la base de datos.
+* DB_NAME: Nombre de la base de datos.
+* DB_USER: Nombre de usuario de la base de datos.
+* DB_PASSWORD: Contraseña de la base de datos.
 
 ## 3. 🔄 **Funcionamiento**
 
