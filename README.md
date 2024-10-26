@@ -2,7 +2,7 @@
 
 ## 1. **Introducción** 📖
 
-El proyecto consiste en la creación de una aplicación de consola que permita la gestión de libros y autores.
+El proyecto consiste en la creación de una aplicación de Console que permita la gestión de libros y autores.
 
 ## 2. **Requisitos** 📉
 
@@ -46,6 +46,13 @@ Para ejecutar el proyecto es necesario seguir estos pasos:
 * DB_NAME: Nombre de la base de datos.
 * DB_USER: Nombre de usuario de la base de datos.
 * DB_PASSWORD: Contraseña de la base de datos.
+
+2. Verifica la configuración y ejecuta el proyecto:
+
+* Asegúrate de que todas las configuraciones estén correctas.
+
+* Ejecuta el proyecto desde tu IDE.
+
 
 ## 3. 🔄 **Funcionamiento**
 
