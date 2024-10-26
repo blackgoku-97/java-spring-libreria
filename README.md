@@ -24,7 +24,7 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 
 ### 2.3. **Herramientas** 🛠️
 
-* Java 21
+* Java
 * Spring Boot
 * Spring Data JPA
 * Spring Boot DevTools (Opcional)
@@ -42,10 +42,10 @@ Para ejecutar el proyecto es necesario seguir estos pasos:
 
 1. Crear variables de entorno
 
-1. DB_HOST: Host de la base de datos.
-2. DB_NAME: Nombre de la base de datos.
-3. DB_USER: Nombre de usuario de la base de datos.
-4. DB_PASSWORD: Contraseña de la base de datos.
+DB_HOST: Host de la base de datos.
+DB_NAME: Nombre de la base de datos.
+DB_USER: Nombre de usuario de la base de datos.
+DB_PASSWORD: Contraseña de la base de datos.
 
 ## 3. 🔄 **Funcionamiento**
 
