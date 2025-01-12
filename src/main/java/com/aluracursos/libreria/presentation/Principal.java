@@ -1,26 +1,22 @@
 package com.aluracursos.libreria.presentation;
 
-import com.aluracursos.libreria.model.Autor;
-import com.aluracursos.libreria.model.Datos;
-import com.aluracursos.libreria.model.Libro;
-import com.aluracursos.libreria.repository.AutorRepository;
-import com.aluracursos.libreria.repository.LibroRepository;
-import com.aluracursos.libreria.service.ConsumoAPI;
-import com.aluracursos.libreria.service.ConvierteDatos;
+import com.aluracursos.libreria.model.clases.*;
+import com.aluracursos.libreria.model.dto.Datos;
+import com.aluracursos.libreria.repository.*;
+import com.aluracursos.libreria.service.*;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Principal {
 
     private static final String URL_BASE = "https://gutendex.com/books/";
-    private ConsumoAPI consumoAPI = new ConsumoAPI();
-    private ConvierteDatos conversor = new ConvierteDatos();
-    private Scanner consola = new Scanner(System.in);
+    private final ConsumoAPI consumoAPI = new ConsumoAPI();
+    private final ConvierteDatos conversor = new ConvierteDatos();
+    private final Scanner consola = new Scanner(System.in);
     private List<Libro> libros;
     private List<Autor> autores;
-    private LibroRepository libroRepositorio;
-    private AutorRepository autorRepositorio;
+    private final LibroRepository libroRepositorio;
+    private final AutorRepository autorRepositorio;
 
     public Principal(LibroRepository libroRepository, AutorRepository autorRepository) {
         this.libroRepositorio = libroRepository;
@@ -78,8 +74,7 @@ public class Principal {
         System.out.println("Ingrese el nombre del libro a buscar");
         var nombreLibro = consola.nextLine().toLowerCase().replace(" ", "%20");
         var json = consumoAPI.obtenerDatos(URL_BASE + "?search=" + nombreLibro);
-        Datos datosLibro = conversor.obtenerDatos(json, Datos.class);
-        return datosLibro;
+        return conversor.obtenerDatos(json, Datos.class);
     }
 
     // Busqueda de un libro por titulo
@@ -87,20 +82,21 @@ public class Principal {
         Datos datosLibro = getDatosLibro();
 
         try {
-            Libro libro = new Libro(datosLibro.resultados().get(0));
-            Autor autor = new Autor(datosLibro.resultados().get(0).autor().get(0));
+            Libro libro = new Libro(datosLibro.resultados().getFirst());
+            Autor autor = new Autor(datosLibro.resultados().getFirst().autor().getFirst());
 
-            System.out.println("""
+            System.out.printf("""
                     Libro[
                         Titulo: %s
                         Autor: %s
                         Idioma: %s
                         Cantidad de descargas: %s
                     ]
-                    """.formatted(libro.getTitulo(),
+                    """,
+                    libro.getTitulo(),
                     libro.getAutor(),
                     libro.getIdiomas(),
-                    libro.getNumeroDeDescargas().toString()));
+                    libro.getNumeroDeDescargas().toString());
 
             libroRepositorio.save(libro);
             autorRepositorio.save(autor);
@@ -114,16 +110,17 @@ public class Principal {
     private void ConsultarLibros() {
         libros = libroRepositorio.findAll();
         libros.stream().forEach(l -> {
-            System.out.println("""
+            System.out.printf("""
                         Titulo: %s
                         Autor: %s
                         Idioma: %s
                         Cantidad de descargas: %s
                     ]
-                    """.formatted(l.getTitulo(),
+                    """,
+                    l.getTitulo(),
                     l.getAutor(),
                     l.getIdiomas(),
-                    l.getNumeroDeDescargas().toString()));
+                    l.getNumeroDeDescargas().toString());
         });
     }
 
@@ -131,14 +128,15 @@ public class Principal {
     private void ConsultarAutores() {
         autores = autorRepositorio.findAll();
         autores.stream().forEach(a -> {
-            System.out.println("""
+            System.out.printf("""
                         Autor: %s
                         Fecha de Nacimiento: %s
                         Fecha de Fallecimiento: %s
                     ]
-                    """.formatted(a.getAutor(),
+                    """,
+                    a.getNombreAutor(),
                     a.getFechaDeNacimiento(),
-                    a.getFechaDeFallecimiento().toString()));
+                    a.getFechaDeFallecimiento().toString());
         });
     }
 
@@ -149,14 +147,15 @@ public class Principal {
 
         List<Autor> autores = autorRepositorio.autorPorFecha(anioBusqueda);
         autores.stream().forEach(a -> {
-            System.out.println("""
+            System.out.printf("""
                         Autor: %s
                         Fecha de Nacimiento: %s
                         Fecha de Fallecimiento: %s
                     ]
-                    """.formatted(a.getAutor(),
+                    """,
+                    a.getNombreAutor(),
                     a.getFechaDeNacimiento().toString(),
-                    a.getFechaDeFallecimiento().toString()));
+                    a.getFechaDeFallecimiento().toString());
         });
     }
 

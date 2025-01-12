@@ -32,6 +32,7 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 * PostgreSQL Driver: Driver de PostgreSQL.
 * PostgreSQL: Sistema de gestión de bases de datos.
 * Maven: Gestor de dependencias.
+* Lombok: Librería para el uso de anotaciones de preprocesamiento.
 * GitHub: Sistema de control de versiones.
 * Intellij IDEA: IDE de programación.
 * Gutendex API: API de la biblioteca Gutendex.

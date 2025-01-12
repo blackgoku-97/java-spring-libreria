@@ -1,7 +1,6 @@
-package com.aluracursos.libreria.model;
+package com.aluracursos.libreria.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public record DatosAutor(
