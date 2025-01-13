@@ -25,7 +25,7 @@ public class Principal {
 
     public void muestraElMenu() {
         var opcion = -1;
-        while (opcion != 6) {
+        while (opcion != 7) {
             var menu = """
                     \n*** Aplicacion de Libreria ***
                     1. Buscar libro por titulo
@@ -33,7 +33,8 @@ public class Principal {
                     3. Listar autores registrados
                     4. Listar autores vivos en un determinado año
                     5. Listar libros por idioma
-                    6. Salir
+                    6. Estadisticas de libros
+                    7. Salir
                     Elige una opcion:\s""";
 
             try {
@@ -61,6 +62,9 @@ public class Principal {
                     BuscarLibroPorIdioma();
                     break;
                 case 6:
+                    EstadisticasDeLibros();
+                    break;
+                case 7:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -208,6 +212,54 @@ public class Principal {
 
         } catch (Exception e) {
             System.out.println("Opcion no valida");
+        }
+    }
+
+    // Estadisticas de libros
+    private void EstadisticasDeLibros() {
+        Datos datosLibros = getDatosLibro();
+
+        try {
+            List<Libro> libros = datosLibros.resultados().stream()
+                    .map(Libro::new)
+                    .toList();
+
+            double[] descargas = libros.stream()
+                    .mapToDouble(Libro::getNumeroDeDescargas)
+                    .toArray();
+
+            DoubleSummaryStatistics estadisticas = libros.stream()
+                    .mapToDouble(Libro::getNumeroDeDescargas)
+                    .summaryStatistics();
+
+            double mediana = obtenerMediana(descargas);
+
+            System.out.printf("""
+                Estadísticas:
+                    Media de descargas: %.2f
+                    Mediana de descargas: %.2f
+                    Máximo de descargas: %.2f
+                    Mínimo de descargas: %.2f
+                    Número de libros: %d
+                """,
+                    estadisticas.getAverage(),
+                    mediana,
+                    estadisticas.getMax(),
+                    estadisticas.getMin(),
+                    libros.size());
+
+        } catch (Exception e) {
+            System.out.println("No se encontraron libros");
+        }
+    }
+
+    private double obtenerMediana(double[] valores) {
+        Arrays.sort(valores);
+        int longitud = valores.length;
+        if (longitud % 2 == 1) {
+            return valores[longitud / 2];
+        } else {
+            return (valores[longitud / 2 - 1] + valores[longitud / 2]) / 2;
         }
     }
 }
