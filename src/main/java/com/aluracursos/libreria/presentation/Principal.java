@@ -6,6 +6,7 @@ import com.aluracursos.libreria.repository.*;
 import com.aluracursos.libreria.service.*;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Principal {
 
@@ -25,7 +26,7 @@ public class Principal {
 
     public void muestraElMenu() {
         var opcion = -1;
-        while (opcion != 7) {
+        while (opcion != 8) {
             var menu = """
                     \n*** Aplicacion de Libreria ***
                     1. Buscar libro por titulo
@@ -34,7 +35,8 @@ public class Principal {
                     4. Listar autores vivos en un determinado año
                     5. Listar libros por idioma
                     6. Estadisticas de libros
-                    7. Salir
+                    7. Top 10 libros mas descargados
+                    8. Salir
                     Elige una opcion:\s""";
 
             try {
@@ -65,6 +67,9 @@ public class Principal {
                     EstadisticasDeLibros();
                     break;
                 case 7:
+                    Top10Libros();
+                    break;
+                case 8:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -98,7 +103,7 @@ public class Principal {
                     ]
                     """,
                     libro.getTitulo(),
-                    libro.getAutor(),
+                    getNombreCompleto(libro.getAutor()),
                     libro.getIdiomas(),
                     libro.getNumeroDeDescargas().toString());
 
@@ -122,7 +127,7 @@ public class Principal {
                     ]
                     """,
                     l.getTitulo(),
-                    l.getAutor(),
+                    getNombreCompleto(l.getAutor()),
                     l.getIdiomas(),
                     l.getNumeroDeDescargas().toString());
         });
@@ -138,7 +143,7 @@ public class Principal {
                         Fecha de Fallecimiento: %s
                     ]
                     """,
-                    a.getNombreAutor(),
+                    getNombreCompleto(a.getNombreAutor()),
                     a.getFechaDeNacimiento(),
                     a.getFechaDeFallecimiento().toString());
         });
@@ -151,13 +156,14 @@ public class Principal {
 
         List<Autor> autores = autorRepositorio.autorPorFecha(anioBusqueda);
         autores.stream().forEach(a -> {
+            String nombreCompleto = getNombreCompleto(a.getNombreAutor());
             System.out.printf("""
-                        Autor: %s
-                        Fecha de Nacimiento: %s
-                        Fecha de Fallecimiento: %s
-                    ]
-                    """,
-                    a.getNombreAutor(),
+                Autor: %s
+                Fecha de Nacimiento: %s
+                Fecha de Fallecimiento: %s
+            ]
+            """,
+                    nombreCompleto,
                     a.getFechaDeNacimiento().toString(),
                     a.getFechaDeFallecimiento().toString());
         });
@@ -198,16 +204,17 @@ public class Principal {
             }
 
             libros.stream().forEach(l -> {
-                System.out.println("""
+                System.out.printf("""
                         Titulo: %s
                         Autor: %s
                         Idioma: %s
                         Cantidad de descargas: %s
                     ]
-                    """.formatted(l.getTitulo(),
-                            l.getAutor(),
-                            l.getIdiomas(),
-                            l.getNumeroDeDescargas().toString()));
+                    """,
+                        l.getTitulo(),
+                        getNombreCompleto(l.getAutor()),
+                        l.getIdiomas(),
+                        l.getNumeroDeDescargas().toString());
             });
 
         } catch (Exception e) {
@@ -261,5 +268,24 @@ public class Principal {
         } else {
             return (valores[longitud / 2 - 1] + valores[longitud / 2]) / 2;
         }
+    }
+
+    // Top 10 libros mas descargados
+    private void Top10Libros() {
+        libros = libroRepositorio.findAll();
+        libros.sort(Comparator.comparing(Libro::getNumeroDeDescargas).reversed());
+        System.out.println("Top 10 libros más descargados:");
+        AtomicInteger index = new AtomicInteger(1);
+        libros.stream().limit(10).forEach(l -> {
+            System.out.printf("%d. %s (%s) - %d descargas\n",
+                    index.getAndIncrement(),
+                    l.getTitulo(),
+                    getNombreCompleto(l.getAutor()),
+                    l.getNumeroDeDescargas());
+        });
+    }
+
+    public String getNombreCompleto(String nombreAutor) {
+        return nombreAutor.split(",")[1].trim() + " " + nombreAutor.split(",")[0].trim();
     }
 }
