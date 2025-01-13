@@ -6,7 +6,6 @@ import com.aluracursos.libreria.repository.*;
 import com.aluracursos.libreria.service.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Principal {
 
@@ -27,7 +26,7 @@ public class Principal {
 
     public void muestraElMenu() {
         var opcion = -1;
-        while (opcion != 9) {
+        while (opcion != 10) {
             var menu = """
                     \n*** Aplicacion de Libreria ***
                     1. Buscar libro por titulo
@@ -38,7 +37,8 @@ public class Principal {
                     6. Estadisticas de libros
                     7. Top 10 libros mas descargados
                     8. Buscar autor por nombre
-                    9. Salir
+                    9. Listar autores nacidos en un rango de años
+                    10. Salir
                     Elige una opcion:\s""";
 
             try {
@@ -83,6 +83,9 @@ public class Principal {
                     }
                     break;
                 case 9:
+                    ConsultarAutorNacidoPorAnio();
+                    break;
+                case 10:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -306,10 +309,22 @@ public class Principal {
         }
     }
 
+    // Autores por nombre
     public Autor buscarAutorPorNombre(String nombre) {
         return autores.stream()
-                .filter(a -> a.getNombreAutor().toLowerCase().split(",")[1].trim().toLowerCase().equals(nombre.toLowerCase()))
+                .filter(a -> a.getNombreAutor().split(",")[1].trim().equalsIgnoreCase(nombre))
                 .findFirst()
                 .orElse(null);
+    }
+
+    // Autores nacidos en un determinado año
+    private void ConsultarAutorNacidoPorAnio() {
+        System.out.println("Ingrese el año de inicio");
+        int anioInicio = Integer.parseInt(consola.nextLine());
+        System.out.println("Ingrese el año de fin");
+        int anioFin = Integer.parseInt(consola.nextLine());
+        List<Autor> autores = autorRepositorio.findByFechaNacimientoBetween(anioInicio, anioFin);
+        System.out.println("Autores nacidos entre " + anioInicio + " y " + anioFin + ":");
+        autores.forEach(autor -> System.out.println(getNombreCompleto(autor.getNombreAutor())));
     }
 }
