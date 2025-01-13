@@ -22,11 +22,12 @@ public class Principal {
     public Principal(LibroRepository libroRepository, AutorRepository autorRepository) {
         this.libroRepositorio = libroRepository;
         this.autorRepositorio = autorRepository;
+        this.autores = new ArrayList<>();
     }
 
     public void muestraElMenu() {
         var opcion = -1;
-        while (opcion != 8) {
+        while (opcion != 9) {
             var menu = """
                     \n*** Aplicacion de Libreria ***
                     1. Buscar libro por titulo
@@ -36,7 +37,8 @@ public class Principal {
                     5. Listar libros por idioma
                     6. Estadisticas de libros
                     7. Top 10 libros mas descargados
-                    8. Salir
+                    8. Buscar autor por nombre
+                    9. Salir
                     Elige una opcion:\s""";
 
             try {
@@ -70,6 +72,17 @@ public class Principal {
                     Top10Libros();
                     break;
                 case 8:
+                    ConsultarAutores();
+                    System.out.println("Ingrese el nombre del autor a buscar");
+                    var nombreAutor = consola.nextLine();
+                    Autor autor = buscarAutorPorNombre(nombreAutor);
+                    if (autor != null) {
+                        System.out.println("Autor encontrado: " + getNombreCompleto(autor.getNombreAutor()));
+                    } else {
+                        System.out.println("Lo siento, el autor no está en nuestra lista.");
+                    }
+                    break;
+                case 9:
                     System.out.println("Saliendo...");
                     break;
                 default:
@@ -275,17 +288,28 @@ public class Principal {
         libros = libroRepositorio.findAll();
         libros.sort(Comparator.comparing(Libro::getNumeroDeDescargas).reversed());
         System.out.println("Top 10 libros más descargados:");
-        AtomicInteger index = new AtomicInteger(1);
-        libros.stream().limit(10).forEach(l -> {
+        libros.stream().limit(10).forEach(libro -> {
             System.out.printf("%d. %s (%s) - %d descargas\n",
-                    index.getAndIncrement(),
-                    l.getTitulo(),
-                    getNombreCompleto(l.getAutor()),
-                    l.getNumeroDeDescargas());
+                    libros.indexOf(libro) + 1,
+                    libro.getTitulo(),
+                    getNombreCompleto(libro.getAutor()),
+                    libro.getNumeroDeDescargas());
         });
     }
 
     public String getNombreCompleto(String nombreAutor) {
-        return nombreAutor.split(",")[1].trim() + " " + nombreAutor.split(",")[0].trim();
+        String[] partes = nombreAutor.split(",");
+        if (partes.length > 1) {
+            return partes[1].trim() + " " + partes[0].trim();
+        } else {
+            return nombreAutor.trim();
+        }
+    }
+
+    public Autor buscarAutorPorNombre(String nombre) {
+        return autores.stream()
+                .filter(a -> a.getNombreAutor().toLowerCase().split(",")[1].trim().toLowerCase().equals(nombre.toLowerCase()))
+                .findFirst()
+                .orElse(null);
     }
 }
