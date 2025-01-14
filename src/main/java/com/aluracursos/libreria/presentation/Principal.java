@@ -25,71 +25,48 @@ public class Principal {
     }
 
     public void muestraElMenu() {
-        var opcion = -1;
-        while (opcion != 10) {
-            var menu = """
-                    \n*** Aplicacion de Libreria ***
-                    1. Buscar libro por titulo
-                    2. Listar libros registrados
-                    3. Listar autores registrados
-                    4. Listar autores vivos en un determinado año
-                    5. Listar libros por idioma
-                    6. Estadisticas de libros
-                    7. Top 10 libros mas descargados
-                    8. Buscar autor por nombre
-                    9. Listar autores nacidos en un rango de años
-                    10. Salir
-                    Elige una opcion:\s""";
+        Map<Integer, Runnable> opciones = new HashMap<>();
+        opciones.put(1, this::buscarLibroPorTitulo);
+        opciones.put(2, this::ConsultarLibros);
+        opciones.put(3, this::ConsultarAutores);
+        opciones.put(4, this::ConsultarAutorPorAnio);
+        opciones.put(5, this::BuscarLibroPorIdioma);
+        opciones.put(6, this::EstadisticasDeLibros);
+        opciones.put(7, this::Top10Libros);
+        opciones.put(8, () -> {
+            ConsultarAutores();
+            System.out.println("Ingrese el nombre del autor a buscar");
+            var nombreAutor = consola.nextLine();
+            Autor autor = buscarAutorPorNombre(nombreAutor);
+            if (autor != null) {
+                System.out.println("Autor encontrado: " + getNombreCompleto(autor.getNombreAutor()));
+            } else {
+                System.out.println("Lo siento, el autor no está en nuestra lista.");
+            }
+        });
+        opciones.put(9, this::ConsultarAutorNacidoPorAnio);
+        opciones.put(10, () -> System.out.println("Saliendo..."));
+
+        for (int opcion = -1; opcion != 10;) {
+            System.out.print("""
+                \n*** Aplicacion de Libreria ***
+                1. Buscar libro por titulo
+                2. Listar libros registrados
+                3. Listar autores registrados
+                4. Listar autores vivos en un determinado año
+                5. Listar libros por idioma
+                6. Estadisticas de libros
+                7. Top 10 libros mas descargados
+                8. Buscar autor por nombre
+                9. Listar autores nacidos en un rango de años
+                10. Salir
+                Elige una opcion:\s""");
 
             try {
-                System.out.print(menu);
                 opcion = Integer.parseInt(consola.nextLine());
-
+                opciones.getOrDefault(opcion, () -> System.out.println("Opcion no válida")).run();
             } catch (Exception e) {
                 System.out.println("Ingrese una opcion valida");
-            }
-
-            switch (opcion) {
-                case 1:
-                    buscarLibroPorTitulo();
-                    break;
-                case 2:
-                    ConsultarLibros();
-                    break;
-                case 3:
-                    ConsultarAutores();
-                    break;
-                case 4:
-                    ConsultarAutorPorAnio();
-                    break;
-                case 5:
-                    BuscarLibroPorIdioma();
-                    break;
-                case 6:
-                    EstadisticasDeLibros();
-                    break;
-                case 7:
-                    Top10Libros();
-                    break;
-                case 8:
-                    ConsultarAutores();
-                    System.out.println("Ingrese el nombre del autor a buscar");
-                    var nombreAutor = consola.nextLine();
-                    Autor autor = buscarAutorPorNombre(nombreAutor);
-                    if (autor != null) {
-                        System.out.println("Autor encontrado: " + getNombreCompleto(autor.getNombreAutor()));
-                    } else {
-                        System.out.println("Lo siento, el autor no está en nuestra lista.");
-                    }
-                    break;
-                case 9:
-                    ConsultarAutorNacidoPorAnio();
-                    break;
-                case 10:
-                    System.out.println("Saliendo...");
-                    break;
-                default:
-                    System.out.println("Opcion no valida");
             }
         }
     }
@@ -98,8 +75,7 @@ public class Principal {
     private Datos getDatosLibro() {
         System.out.println("Ingrese el nombre del libro a buscar");
         var nombreLibro = consola.nextLine().toLowerCase().replace(" ", "%20");
-        var json = consumoAPI.obtenerDatos(URL_BASE + "?search=" + nombreLibro);
-        return conversor.obtenerDatos(json, Datos.class);
+        return conversor.obtenerDatos(consumoAPI.obtenerDatos(URL_BASE + "?search=" + nombreLibro), Datos.class);
     }
 
     // Busqueda de un libro por titulo
@@ -134,7 +110,7 @@ public class Principal {
     // Libros registrados
     private void ConsultarLibros() {
         libros = libroRepositorio.findAll();
-        libros.stream().forEach(l -> {
+        libros.forEach(l -> {
             System.out.printf("""
                         Titulo: %s
                         Autor: %s
@@ -152,7 +128,7 @@ public class Principal {
     // Autores registrados
     private void ConsultarAutores() {
         autores = autorRepositorio.findAll();
-        autores.stream().forEach(a -> {
+        autores.forEach(a -> {
             System.out.printf("""
                         Autor: %s
                         Fecha de Nacimiento: %s
@@ -167,75 +143,58 @@ public class Principal {
 
     // Autores vivos en un determinado año
     private void ConsultarAutorPorAnio() {
-        System.out.println("Ingrese el año aproximado del autor a buscar");
+        System.out.println("Ingrese el año predeterminado del autor a buscar");
         var anioBusqueda = Integer.parseInt(consola.nextLine());
 
         List<Autor> autores = autorRepositorio.autorPorFecha(anioBusqueda);
-        autores.stream().forEach(a -> {
-            String nombreCompleto = getNombreCompleto(a.getNombreAutor());
+        autores.forEach(a -> {
             System.out.printf("""
                 Autor: %s
                 Fecha de Nacimiento: %s
                 Fecha de Fallecimiento: %s
             ]
             """,
-                    nombreCompleto,
-                    a.getFechaDeNacimiento().toString(),
+                    getNombreCompleto(a.getNombreAutor()),
+                    a.getFechaDeNacimiento(),
                     a.getFechaDeFallecimiento().toString());
         });
     }
 
     // Libros por idioma
     private void BuscarLibroPorIdioma() {
-        System.out.println("""
-                Seleccione el idioma del libro
-                1. es - español
-                2. en - ingles
-                3. fr - frances
-                4. de - aleman
-                5. it - Italiano
-                Elige una opcion:\s""");
-
-        try {
-            var opcion2 = Integer.parseInt(consola.nextLine());
-
-            switch (opcion2) {
-                case 1:
-                    libros = libroRepositorio.findByIdiomas("es");
-                    break;
-                case 2:
-                    libros = libroRepositorio.findByIdiomas("en");
-                    break;
-                case 3:
-                    libros = libroRepositorio.findByIdiomas("fr");
-                    break;
-                case 4:
-                    libros = libroRepositorio.findByIdiomas("de");
-                    break;
-                case 5:
-                    libros = libroRepositorio.findByIdiomas("it");
-                    break;
-                default:
-                    System.out.println("Introduzca una opcion valida");
-            }
-
-            libros.stream().forEach(l -> {
-                System.out.printf("""
-                        Titulo: %s
-                        Autor: %s
-                        Idioma: %s
-                        Cantidad de descargas: %s
-                    ]
-                    """,
-                        l.getTitulo(),
-                        getNombreCompleto(l.getAutor()),
-                        l.getIdiomas(),
-                        l.getNumeroDeDescargas().toString());
-            });
-
-        } catch (Exception e) {
-            System.out.println("Opcion no valida");
+        String[] idiomas = {"es", "en", "fr", "de", "it"};
+        System.out.println("Seleccione el idioma del libro:");
+        for (int i = 0; i < idiomas.length; i++) {
+            System.out.println((i + 1) + ". " + idiomas[i]);
         }
+        System.out.print("Elige una opción: ");
+
+        int opcion;
+        try {
+            opcion = Integer.parseInt(consola.nextLine());
+            if (opcion < 1 || opcion > idiomas.length) {
+                System.out.println("Opción no válida");
+                return;
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Opción no válida");
+            return;
+        }
+
+        libros = libroRepositorio.findByIdiomas(idiomas[opcion - 1]);
+        libros.forEach(l -> {
+            System.out.printf("""
+                Título: %s
+                Autor: %s
+                Idioma: %s
+                Cantidad de descargas: %s
+            """,
+                    l.getTitulo(),
+                    getNombreCompleto(l.getAutor()),
+                    l.getIdiomas(),
+                    l.getNumeroDeDescargas().toString());
+            System.out.println();
+        });
     }
 
     // Estadisticas de libros
