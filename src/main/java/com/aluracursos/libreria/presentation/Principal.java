@@ -25,31 +25,22 @@ public class Principal {
     }
 
     public void muestraElMenu() {
-        Map<Integer, Runnable> opciones = new HashMap<>();
-        opciones.put(1, this::buscarLibroPorTitulo);
-        opciones.put(2, this::ConsultarLibros);
-        opciones.put(3, this::ConsultarAutores);
-        opciones.put(4, this::ConsultarAutorPorAnio);
-        opciones.put(5, this::BuscarLibroPorIdioma);
-        opciones.put(6, this::EstadisticasDeLibros);
-        opciones.put(7, this::Top10Libros);
-        opciones.put(8, () -> {
-            ConsultarAutores();
-            System.out.println("Ingrese el nombre del autor a buscar");
-            var nombreAutor = consola.nextLine();
-            Autor autor = buscarAutorPorNombre(nombreAutor);
-            if (autor != null) {
-                System.out.println("Autor encontrado: " + getNombreCompleto(autor.getNombreAutor()));
-            } else {
-                System.out.println("Lo siento, el autor no está en nuestra lista.");
-            }
-        });
-        opciones.put(9, this::ConsultarAutorNacidoPorAnio);
-        opciones.put(10, () -> System.out.println("Saliendo..."));
+        Map<Integer, Runnable> opciones = Map.of(
+                1, this::buscarLibroPorTitulo,
+                2, this::ConsultarLibros,
+                3, this::ConsultarAutores,
+                4, this::ConsultarAutorPorAnio,
+                5, this::BuscarLibroPorIdioma,
+                6, this::EstadisticasDeLibros,
+                7, this::Top10Libros,
+                8, this::buscarAutor,
+                9, this::ConsultarAutorNacidoPorAnio,
+                10, this::Salir
+        );
 
         for (int opcion = -1; opcion != 10;) {
             System.out.print("""
-                \n*** Aplicacion de Libreria ***
+                \n*** Aplicacion de Librería ***
                 1. Buscar libro por titulo
                 2. Listar libros registrados
                 3. Listar autores registrados
@@ -103,42 +94,38 @@ public class Principal {
             autorRepositorio.save(autor);
 
         } catch (Exception e) {
-            System.out.println("No se encontro el libro");
+            System.out.println("No se encontró el libro");
         }
     }
 
     // Libros registrados
     private void ConsultarLibros() {
         libros = libroRepositorio.findAll();
-        libros.forEach(l -> {
-            System.out.printf("""
-                        Titulo: %s
-                        Autor: %s
-                        Idioma: %s
-                        Cantidad de descargas: %s
-                    ]
-                    """,
-                    l.getTitulo(),
-                    getNombreCompleto(l.getAutor()),
-                    l.getIdiomas(),
-                    l.getNumeroDeDescargas().toString());
-        });
+        libros.forEach(l -> System.out.printf("""
+                    Titulo: %s
+                    Autor: %s
+                    Idioma: %s
+                    Cantidad de descargas: %s
+                ]
+                """,
+                l.getTitulo(),
+                getNombreCompleto(l.getAutor()),
+                l.getIdiomas(),
+                l.getNumeroDeDescargas().toString()));
     }
 
     // Autores registrados
     private void ConsultarAutores() {
         autores = autorRepositorio.findAll();
-        autores.forEach(a -> {
-            System.out.printf("""
-                        Autor: %s
-                        Fecha de Nacimiento: %s
-                        Fecha de Fallecimiento: %s
-                    ]
-                    """,
-                    getNombreCompleto(a.getNombreAutor()),
-                    a.getFechaDeNacimiento(),
-                    a.getFechaDeFallecimiento().toString());
-        });
+        autores.forEach(a -> System.out.printf("""
+                    Autor: %s
+                    Fecha de Nacimiento: %s
+                    Fecha de Fallecimiento: %s
+                ]
+                """,
+                getNombreCompleto(a.getNombreAutor()),
+                a.getFechaDeNacimiento(),
+                a.getFechaDeFallecimiento().toString()));
     }
 
     // Autores vivos en un determinado año
@@ -147,17 +134,15 @@ public class Principal {
         var anioBusqueda = Integer.parseInt(consola.nextLine());
 
         List<Autor> autores = autorRepositorio.autorPorFecha(anioBusqueda);
-        autores.forEach(a -> {
-            System.out.printf("""
-                Autor: %s
-                Fecha de Nacimiento: %s
-                Fecha de Fallecimiento: %s
-            ]
-            """,
-                    getNombreCompleto(a.getNombreAutor()),
-                    a.getFechaDeNacimiento(),
-                    a.getFechaDeFallecimiento().toString());
-        });
+        autores.forEach(a -> System.out.printf("""
+            Autor: %s
+            Fecha de Nacimiento: %s
+            Fecha de Fallecimiento: %s
+        ]
+        """,
+                getNombreCompleto(a.getNombreAutor()),
+                a.getFechaDeNacimiento(),
+                a.getFechaDeFallecimiento().toString()));
     }
 
     // Libros por idioma
@@ -206,15 +191,13 @@ public class Principal {
                     .map(Libro::new)
                     .toList();
 
-            double[] descargas = libros.stream()
-                    .mapToDouble(Libro::getNumeroDeDescargas)
-                    .toArray();
-
             DoubleSummaryStatistics estadisticas = libros.stream()
                     .mapToDouble(Libro::getNumeroDeDescargas)
                     .summaryStatistics();
 
-            double mediana = obtenerMediana(descargas);
+            double mediana = obtenerMediana(libros.stream()
+                    .mapToDouble(Libro::getNumeroDeDescargas)
+                    .toArray());
 
             System.out.printf("""
                 Estadísticas:
@@ -236,27 +219,43 @@ public class Principal {
     }
 
     private double obtenerMediana(double[] valores) {
-        Arrays.sort(valores);
-        int longitud = valores.length;
-        if (longitud % 2 == 1) {
-            return valores[longitud / 2];
+        int indiceMediana = valores.length / 2;
+        return quickSelect(valores, indiceMediana);
+    }
+
+    private double quickSelect(double[] valores, int k) {
+        if (valores.length == 1) {
+            return valores[0];
+        }
+        double[] menores = new double[k];
+        double[] mayores = new double[valores.length - k - 1];
+        int i = 0, j = 0;
+        for (double valor : valores) {
+            if (valor < valores[valores.length / 2]) {
+                menores[i++] = valor;
+            } else if (valor > valores[valores.length / 2]) {
+                mayores[j++] = valor;
+            }
+        }
+        if (k < i) {
+            return quickSelect(menores, k);
+        } else if (k > i) {
+            return quickSelect(mayores, k - i - 1);
         } else {
-            return (valores[longitud / 2 - 1] + valores[longitud / 2]) / 2;
+            return valores[valores.length / 2];
         }
     }
 
-    // Top 10 libros mas descargados
+    // Top 10 libros más descargados
     private void Top10Libros() {
         libros = libroRepositorio.findAll();
         libros.sort(Comparator.comparing(Libro::getNumeroDeDescargas).reversed());
         System.out.println("Top 10 libros más descargados:");
-        libros.stream().limit(10).forEach(libro -> {
-            System.out.printf("%d. %s (%s) - %d descargas\n",
-                    libros.indexOf(libro) + 1,
-                    libro.getTitulo(),
-                    getNombreCompleto(libro.getAutor()),
-                    libro.getNumeroDeDescargas());
-        });
+        libros.stream().limit(10).forEach(libro -> System.out.printf("%d. %s (%s) - %d descargas\n",
+                libros.indexOf(libro) + 1,
+                libro.getTitulo(),
+                getNombreCompleto(libro.getAutor()),
+                libro.getNumeroDeDescargas()));
     }
 
     public String getNombreCompleto(String nombreAutor) {
@@ -276,6 +275,18 @@ public class Principal {
                 .orElse(null);
     }
 
+    public void buscarAutor() {
+        ConsultarAutores();
+        System.out.println("Ingrese el nombre del autor a buscar");
+        var nombreAutor = consola.nextLine();
+        Autor autor = buscarAutorPorNombre(nombreAutor);
+        if (autor != null) {
+            System.out.println("Autor encontrado: " + getNombreCompleto(autor.getNombreAutor()));
+        } else {
+            System.out.println("Lo siento, el autor no está en nuestra lista.");
+        }
+    }
+
     // Autores nacidos en un determinado año
     private void ConsultarAutorNacidoPorAnio() {
         System.out.println("Ingrese el año de inicio");
@@ -285,5 +296,10 @@ public class Principal {
         List<Autor> autores = autorRepositorio.findByFechaNacimientoBetween(anioInicio, anioFin);
         System.out.println("Autores nacidos entre " + anioInicio + " y " + anioFin + ":");
         autores.forEach(autor -> System.out.println(getNombreCompleto(autor.getNombreAutor())));
+    }
+
+    // Saliendo del programa
+    private void Salir() {
+        System.out.println("Saliendo...");
     }
 }

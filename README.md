@@ -13,14 +13,14 @@ El proyecto consiste en la creación de una aplicación de consola que permita l
 * El sistema debe permitir la consulta de autores registrados.
 * El sistema debe permitir la busqueda de autores vivos por un año determinado.
 * El sistema debe permitir la consulta de libros por idioma.
-* El sistema debe permitir las estadísticas de libros (se demora pero funciona).
-* El sistema debe permitir la busqueda de los 10 libros mas descargados (de la base de datos).
+* El sistema debe permitir las estadísticas de libros.
+* El sistema debe permitir la busqueda de los 10 libros más descargados (de la base de datos).
 * El sistema debe permitir la busqueda de autores vivos por un rango de años.
 * El sistema debe permitir la busqueda de un autor por nombre.
 
 ### 2.2. **Requisitos Previos** ⚙️
 
-Antes de proceder, asegurate de tener estos programas en el equipo:
+Antes de proceder, asegúrate de tener estos programas en el equipo:
 
 * ☕ **JDK 21**
 * 🖥️ **IntelliJ IDEA (Puede usar cualquier IDE de Java o editor de programación)
@@ -32,7 +32,7 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 * Spring Boot: Framework de Java para el desarrollo.
 * Spring Data JPA: Dependencia de Spring para la integración con bases de datos.
 * Spring Boot DevTools: Herramienta de desarrollo (Opcional)
-* Jackson: Librería para la serialización y deserialización de objetos JSON.
+* Jackson: Librería para la serialización y deserialization de objetos JSON.
 * PostgreSQL Driver: Driver de PostgreSQL.
 * PostgreSQL: Sistema de gestión de bases de datos.
 * Maven: Gestor de dependencias.
@@ -45,15 +45,15 @@ Antes de proceder, asegurate de tener estos programas en el equipo:
 
 Para ejecutar el proyecto es necesario seguir estos pasos:
 
-1. Crear variables de entorno
+2.4.1. Crear variables de entorno
 
 * DB_HOST: Host de la base de datos.
 * DB_PORT: Puerto de la base de datos.
 * DB_NAME: Nombre de la base de datos.
 * DB_USER: Nombre de usuario de la base de datos.
-* DB_PASSWORD: Contraseña de la base de datos.
+* DB_PASSWORD: Contraseña de la base de datos.
 
-2. Verifica la configuración y ejecuta el proyecto:
+2.4.2. Verifica la configuración y ejecuta el proyecto:
 
 * Asegúrate de que todas las configuraciones estén correctas.
 
