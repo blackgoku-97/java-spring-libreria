@@ -2,7 +2,7 @@
 
 ## 1. **Introducción** 📖
 
-El proyecto consiste en la creación de una aplicación de consola que permita la gestión de libros y autores.
+El proyecto es para el ChallengeOne de Alura. El objetivo LiterAlura consiste en una aplicación de Librería que permita la gestión de libros y autores.
 
 ## 2. **Requisitos** 📉
 
